@@ -8,26 +8,27 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
-public class TimeSeriesKey implements 
-  WritableComparable<TimeSeriesKey>
+public class TimeSeriesKey implements WritableComparable<TimeSeriesKey>
 {
-  private IntWritable year;
-  private IntWritable month;
-  private IntWritable day;
+  private IntWritable year = new IntWritable();
+  private IntWritable month = new IntWritable();
+  private IntWritable day = new IntWritable();
   
-  private Text date;
-  
-  // index act as month
-  private final int [] dayInMonth =
-    {31,28,31,30,31,30,31,31,30,31,30,31};
-  
-  public TimeSeriesKey(String date)
+  private Text date = new Text();
+
+  /*
+   * either create a default constructor (no input args)
+   * or have no constructors at all
+   */
+
+  public void parseDate(String d)
   {
-	this.date = new Text(date);
-    String [] dateList = date.split("-");
-    year = new IntWritable(Integer.valueOf(dateList[0]));
-    month = new IntWritable(Integer.valueOf(dateList[1]));
-    day = new IntWritable(Integer.valueOf(dateList[2]));
+	date.set(d);
+    String [] dateList = d.split("-");
+    
+    year.set(Integer.valueOf(dateList[0]));
+    month.set(Integer.valueOf(dateList[1]));
+    day.set(Integer.valueOf(dateList[2]));
   }
  
   @Override

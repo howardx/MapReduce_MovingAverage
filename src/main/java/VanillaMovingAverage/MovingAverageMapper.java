@@ -17,16 +17,20 @@ import org.apache.hadoop.mapreduce.Mapper;
 public class MovingAverageMapper extends
   Mapper<LongWritable, Text, TimeSeriesKey, DoubleWritable>
 {
-  public void map(IntWritable lineOffset, Text recordLine, 
+  public TimeSeriesKey key = new TimeSeriesKey(); // custom key type
+  
+  public void map(LongWritable lineOffset, Text recordLine, 
     Context context) throws IOException, InterruptedException
   {
 	// csv file
     String [] line = recordLine.toString().split(",");
-    // the last column is price
+    
+    // last column is price, first column is date
     DoubleWritable price = new DoubleWritable(Double.valueOf(line[line.length-1]));
     String date = line[0];
     
-    TimeSeriesKey key = new TimeSeriesKey(date);
+    key.parseDate(date);
+    
     context.write(key, price);
   }
 }

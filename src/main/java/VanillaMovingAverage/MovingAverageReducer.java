@@ -11,12 +11,17 @@ import org.apache.hadoop.mapreduce.Reducer;
 public class MovingAverageReducer extends
   Reducer<TimeSeriesKey, DoubleWritable, Text, DoubleWritable>
 {
-  private final int windowSize = 5;
-  Queue<Double> window = new LinkedList<Double>();
+  // output should have (inputRowNumber - windowSize) number of rows
+  private final int windowSize = 20; 
+  private Queue<Double> window = new LinkedList<Double>();
   
-  public void reduce(TimeSeriesKey key,
-    Iterable<DoubleWritable> values, Context context) throws
-    IOException, InterruptedException
+  /*
+   * Map Reduce reuses objects (key/value)
+   */
+  public Text outputKey = new Text();
+  
+  public void reduce(TimeSeriesKey key, Iterable<DoubleWritable> values,
+    Context context) throws IOException, InterruptedException
   {
     for (DoubleWritable value : values)
     {
@@ -27,13 +32,18 @@ public class MovingAverageReducer extends
       if (window.size() < windowSize)
       {
         window.add( Double.valueOf( value.toString() ) );
-        return;
       }
       else // window.size() == windowSize
       {
-        context.write(key.getDate(), new DoubleWritable( calculateAverage() ));
+    	outputKey = key.getDate();
+    	
+        context.write(outputKey, new DoubleWritable( calculateAverage() ));
         window.poll();
-        return;
+
+        /* after poping from head of the queue, new value from current 
+         * iteration should be added 
+         */
+        window.add( Double.valueOf( value.toString() ) );
       }
     }
   }

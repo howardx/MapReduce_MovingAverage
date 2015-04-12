@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -15,6 +15,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 import VanillaMovingAverage.MovingAverageMapper;
 import VanillaMovingAverage.MovingAverageReducer;
+import VanillaMovingAverage.TimeSeriesKey;
  
 public class SimpleMovingAverage_Runner
 {
@@ -35,10 +36,14 @@ public class SimpleMovingAverage_Runner
     job.setMapperClass(MovingAverageMapper.class);
     job.setReducerClass(MovingAverageReducer.class);
     job.setNumReduceTasks(1);
+  
+    //Specify (key,value) pair type for Mapper output
+    job.setMapOutputKeyClass(TimeSeriesKey.class);
+    job.setMapOutputValueClass(DoubleWritable.class);
  
-    // Specify key / value
+    //Specify (key,value) pair type for Reducer/Final output
     job.setOutputKeyClass(Text.class);
-    job.setOutputValueClass(IntWritable.class);
+    job.setOutputValueClass(DoubleWritable.class);
  
     // Input
     FileInputFormat.addInputPath(job, inputPath);
@@ -51,7 +56,9 @@ public class SimpleMovingAverage_Runner
     // Delete output if exists
     FileSystem hdfs = FileSystem.get(conf);
     if (hdfs.exists(outputDir))
-        hdfs.delete(outputDir, true);
+    {
+      hdfs.delete(outputDir, true);
+    }
  
     // Execute job
     int code = job.waitForCompletion(true) ? 0 : 1;
