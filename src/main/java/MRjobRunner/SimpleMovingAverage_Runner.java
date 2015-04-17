@@ -13,9 +13,9 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
-import VanillaMovingAverage.MovingAverageMapper;
-import VanillaMovingAverage.MovingAverageReducer;
-import VanillaMovingAverage.TimeSeriesKey;
+import singleTimeSeriesSMA.MovingAverageMapper;
+import singleTimeSeriesSMA.MovingAverageReducer;
+import singleTimeSeriesSMA.TimeSeriesKey;
  
 public class SimpleMovingAverage_Runner
 {

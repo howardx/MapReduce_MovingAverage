@@ -1,4 +1,4 @@
-package VanillaMovingAverage;
+package singleTimeSeriesSMA;
 
 import java.io.DataInput;
 import java.io.DataOutput;

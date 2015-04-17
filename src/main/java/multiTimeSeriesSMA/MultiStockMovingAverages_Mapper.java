@@ -1,4 +1,4 @@
-package SecondarySort_with_MovingAverage_MR;
+package multiTimeSeriesSMA;
 /*
 import java.io.IOException;
 
